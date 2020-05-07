@@ -3,6 +3,7 @@ use arrayvec::ArrayVec;
 use std::fmt;
 use strum::IntoEnumIterator;
 
+/// A collection of seven notes, categorised by a `Mode`.
 #[derive(Copy, Clone)]
 pub struct Key {
     notes: [Note; 7],
@@ -10,9 +11,12 @@ pub struct Key {
 }
 
 impl Key {
+    /// Creates a new `Key` based on the given `root_note` and `mode`.
     pub fn new(root_note: Note, mode: Mode) -> Self {
         let mut notes = ArrayVec::<[Note; 7]>::new();
         notes.push(root_note);
+        // Procedurally creates the key's notes based on the intervals
+        // of the `mode`
         for (i, interval) in mode.into_iter().enumerate() {
             let previous_note = notes[i];
             notes.push(previous_note + interval);
@@ -24,6 +28,7 @@ impl Key {
         }
     }
 
+    /// Returns the key's seven note values without regard for octave numbers.
     fn notes_disregarding_octave(mut self) -> [Note; 7] {
         for note in &mut self.notes {
             *note = note.disregard_octave();
@@ -126,6 +131,7 @@ mod display_tests {
     }
 }
 
+/// Guesses keys that the given collection of notes could belong to.
 pub fn guess_key(notes: Vec<Note>, root_note: Option<Note>) -> Vec<Key> {
     let key_filter = |root_note, key_candidates: &mut Vec<_>| {
         for mode in Mode::iter() {
@@ -140,6 +146,7 @@ pub fn guess_key(notes: Vec<Note>, root_note: Option<Note>) -> Vec<Key> {
     };
 
     let mut key_candidates = Vec::new();
+    // Uses the given `root_note` if it was supplied
     if let Some(root_note) = root_note {
         key_filter(root_note, &mut key_candidates);
     } else {

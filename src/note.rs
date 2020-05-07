@@ -7,16 +7,20 @@ use std::{
     str::FromStr,
 };
 
+/// A musical note, represented as a single positive integer.
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub struct Note {
     pub value: usize,
 }
 
 impl Note {
+    /// Creates a new `Note` with the given `value`.
     pub fn new(value: usize) -> Self {
         Note { value }
     }
 
+    /// Returns a new `Note` where the inner `value` holds no octave information
+    /// i.e. it is constrained between 0 and 11
     pub fn disregard_octave(&self) -> Self {
         Self {
             value: self.value % 12,
@@ -46,6 +50,7 @@ impl FromStr for Note {
             anyhow::anyhow!("failed to parse note name")
         })?;
 
+        // Gives an octave value of 0 if none is supplied
         let octave = if s.is_empty() { 0 } else { usize::from_str(s)? };
 
         Ok(Self::new(name + octave * 12))
@@ -60,8 +65,8 @@ fn parsing() {
     assert_eq!(Note::from_str("Bb10").unwrap(), Note::new(130));
     assert_eq!(Note::from_str("Ab").unwrap(), Note::new(8));
 
-    assert!(Note::from_str("Cb2").is_err());
-    assert!(Note::from_str("Gb-2").is_err());
+    assert!(Note::from_str("Cb2").is_err()); // Invalid note name
+    assert!(Note::from_str("Gb-2").is_err()); // Invalid octave number
 }
 
 impl fmt::Display for Note {
@@ -83,6 +88,7 @@ impl fmt::Display for Note {
         };
 
         if f.alternate() {
+            // Writes only the name if alternate formatting is used
             write!(f, "{}", name)
         } else {
             let octave = self.value / 12;
@@ -142,6 +148,8 @@ fn transposition() {
 impl Sub for Note {
     type Output = Interval;
 
+    // Outputs the semitone difference between the two note values
+    // as an `Interval`
     fn sub(self, other: Self) -> Self::Output {
         match self.value.cmp(&other.value) {
             Ordering::Greater => Interval::new(self.value - other.value),

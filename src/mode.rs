@@ -1,6 +1,7 @@
 use crate::{Interval, SEMITONE, TONE};
 use strum_macros::{Display as EnumDisplay, EnumIter, EnumString};
 
+/// An enumeration over the seven musical modes.
 #[derive(EnumString, EnumIter, EnumDisplay, Debug, Copy, Clone)]
 pub enum Mode {
     Ionian,
@@ -18,6 +19,8 @@ impl IntoIterator for Mode {
 
     fn into_iter(self) -> Self::IntoIter {
         Self::IntoIter {
+            // The seventh interval is ignored, as it simply returns to the octave
+            // (which is already stored as the root note of a `Key`)
             intervals: match self {
                 Mode::Ionian => [TONE, TONE, SEMITONE, TONE, TONE, TONE],
                 Mode::Dorian => [TONE, SEMITONE, TONE, TONE, TONE, SEMITONE],

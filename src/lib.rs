@@ -1,3 +1,4 @@
+#[warn(missing_docs)]
 mod interval;
 mod key;
 mod mode;
