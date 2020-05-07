@@ -21,7 +21,7 @@ impl Note {
 
     /// Returns a new `Note` where the inner `value` holds no octave information
     /// i.e. it is constrained between 0 and 11
-    pub fn disregard_octave(&self) -> Self {
+    pub fn disregard_octave(self) -> Self {
         Self {
             value: self.value % 12,
         }
