@@ -3,6 +3,10 @@ name = "minstrel"
 version = "0.1.0"
 authors = ["Thomas Freeman <tomclaudefreeman@gmail.com>"]
 edition = "2018"
+description = "A simple and intuitive music library."
+repository = "https://github.com/thfm/minstrel"
+readme = "README.md"
+license-file = "LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
