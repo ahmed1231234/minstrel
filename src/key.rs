@@ -12,10 +12,17 @@ pub struct Key {
 
 impl Key {
     /// Creates a new `Key` based on the given `root_note` and `mode`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let c_major = Key::new(Note::new(0), Mode::Ionian);
+    /// let a_minor = Key::new(Note::new(9), Mode::Aeolian);
+    /// ```
     pub fn new(root_note: Note, mode: Mode) -> Self {
         let mut notes = ArrayVec::<[Note; 7]>::new();
         notes.push(root_note);
-        // Procedurally creates the key's notes based on the intervals
+        // Procedurally creates the key based on the intervals
         // of the `mode`
         for (i, interval) in mode.into_iter().enumerate() {
             let previous_note = notes[i];
@@ -28,7 +35,27 @@ impl Key {
         }
     }
 
-    /// Returns the key's seven note values without regard for octave numbers.
+    /// Returns the key's seven notes without regard for octave numbers.
+    ///
+    /// See `Note::disregard_octave()` for more detail.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let e_phrygian = Key::new(Note::new(4), Mode::Phrygian);
+    /// assert_eq!(
+    ///     e_phrygian.notes_disregarding_octave(),
+    ///     [
+    ///         Note::new(4),
+    ///         Note::new(5),
+    ///         Note::new(7),
+    ///         Note::new(9),
+    ///         Note::new(11),
+    ///         Note::new(0),
+    ///         Note::new(2),
+    ///     ]
+    /// );
+    /// ```
     fn notes_disregarding_octave(mut self) -> [Note; 7] {
         for note in &mut self.notes {
             *note = note.disregard_octave();
@@ -90,7 +117,7 @@ impl fmt::Display for Key {
             let num_notes = self.notes.len();
             for (i, note) in self.notes.iter().enumerate() {
                 write!(f, "{:#}", note)?;
-                // Only prints a space if this is not the final note
+                // Only prints a space if this was not the final note
                 // (to avoid having a trailing space)
                 if i != num_notes - 1 {
                     f.write_str(" ")?;
@@ -131,8 +158,10 @@ mod display_tests {
     }
 }
 
-/// Guesses keys that the given collection of notes could belong to.
+/// Guesses keys that the given collection of `notes` could belong to.
 pub fn guess_key(notes: Vec<Note>, root_note: Option<Note>) -> Vec<Key> {
+    // Loops through each mode for the given root note and checks if it
+    // contains all of the given `notes`
     let key_filter = |root_note, key_candidates: &mut Vec<_>| {
         for mode in Mode::iter() {
             let key = Key::new(root_note, mode);

@@ -7,7 +7,7 @@ use std::{
     str::FromStr,
 };
 
-/// A musical note, represented as a single positive integer.
+/// A note, represented as a single positive integer.
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub struct Note {
     pub value: usize,
@@ -15,12 +15,29 @@ pub struct Note {
 
 impl Note {
     /// Creates a new `Note` with the given `value`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let C0 = Note::new(0);
+    /// let F4 = Note::new(53);
+    /// let Ab5 = Note::new(68);
+    /// ```
     pub fn new(value: usize) -> Self {
         Note { value }
     }
 
     /// Returns a new `Note` where the inner `value` holds no octave information
-    /// i.e. it is constrained between 0 and 11
+    /// i.e. it is constrained between 0 and 11.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let F = Note::new(53).disregard_octave();
+    ///
+    /// let Ab5 = Note::new(68);
+    /// let Ab = Ab5.disregard_octave();
+    /// ```
     pub fn disregard_octave(self) -> Self {
         Self {
             value: self.value % 12,
@@ -50,7 +67,7 @@ impl FromStr for Note {
             anyhow::anyhow!("failed to parse note name")
         })?;
 
-        // Gives an octave value of 0 if none is supplied
+        // Gives an octave value of 0 if none was supplied
         let octave = if s.is_empty() { 0 } else { usize::from_str(s)? };
 
         Ok(Self::new(name + octave * 12))
@@ -88,11 +105,10 @@ impl fmt::Display for Note {
         };
 
         if f.alternate() {
-            // Writes only the name if alternate formatting is used
-            write!(f, "{}", name)
-        } else {
             let octave = self.value / 12;
             write!(f, "{}{}", name, octave)
+        } else {
+            write!(f, "{}", name)
         }
     }
 }
@@ -103,16 +119,16 @@ mod display_tests {
 
     #[test]
     fn normal() {
-        assert_eq!(Note::new(0).to_string(), "C0");
-        assert_eq!(Note::new(37).to_string(), "Db3");
-        assert_eq!(Note::new(76).to_string(), "E6");
+        assert_eq!(Note::new(0).to_string(), "C");
+        assert_eq!(Note::new(37).to_string(), "Db");
+        assert_eq!(Note::new(76).to_string(), "E");
     }
 
     #[test]
     fn alternate() {
-        assert_eq!(format!("{:#}", Note::new(0)), "C");
-        assert_eq!(format!("{:#}", Note::new(37)), "Db");
-        assert_eq!(format!("{:#}", Note::new(76)), "E");
+        assert_eq!(format!("{:#}", Note::new(0)), "C0");
+        assert_eq!(format!("{:#}", Note::new(37)), "Db3");
+        assert_eq!(format!("{:#}", Note::new(76)), "E6");
     }
 }
 
@@ -179,6 +195,7 @@ impl IntoIterator for Note {
     }
 }
 
+/// An iterator over a `Note`.
 pub struct NoteIter {
     note: Note,
     first: bool,
@@ -188,7 +205,7 @@ impl Iterator for NoteIter {
     type Item = Note;
 
     fn next(&mut self) -> Option<Self::Item> {
-        // Returns the original note if this is the first iteration
+        // Returns the original note if this was the first iteration
         if self.first {
             self.first = false;
             Some(self.note)

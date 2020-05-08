@@ -19,8 +19,8 @@ impl IntoIterator for Mode {
 
     fn into_iter(self) -> Self::IntoIter {
         Self::IntoIter {
-            // The seventh interval is ignored, as it simply returns to the octave
-            // (which is already stored as the root note of a `Key`)
+            // The seventh interval is ignored, since it simply returns to the octave
+            // (which is already stored as the root note in a `Key`)
             intervals: match self {
                 Mode::Ionian => [TONE, TONE, SEMITONE, TONE, TONE, TONE],
                 Mode::Dorian => [TONE, SEMITONE, TONE, TONE, TONE, SEMITONE],
@@ -35,7 +35,7 @@ impl IntoIterator for Mode {
     }
 }
 
-/// An iterator over a mode's intervals.
+/// An iterator over a mode's six intervals.
 pub struct ModeIntervalIter {
     intervals: [Interval; 6],
     index: usize,
