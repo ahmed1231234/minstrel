@@ -1,4 +1,3 @@
-use crate::{Interval, SEMITONE, TONE};
 use strum_macros::{Display as EnumDisplay, EnumIter, EnumString};
 
 /// An enumeration over the seven musical modes.
@@ -14,39 +13,20 @@ pub enum Mode {
 }
 
 impl IntoIterator for Mode {
-    type Item = Interval;
-    type IntoIter = ModeIntervalIter;
+    type Item = &'static usize;
+    type IntoIter = std::slice::Iter<'static, usize>;
 
     fn into_iter(self) -> Self::IntoIter {
-        Self::IntoIter {
-            // The seventh interval is ignored, since it simply returns to the octave
-            // (which is already stored as the root note in a `Key`)
-            intervals: match self {
-                Mode::Ionian => [TONE, TONE, SEMITONE, TONE, TONE, TONE],
-                Mode::Dorian => [TONE, SEMITONE, TONE, TONE, TONE, SEMITONE],
-                Mode::Phrygian => [SEMITONE, TONE, TONE, TONE, SEMITONE, TONE],
-                Mode::Mixolydian => [TONE, TONE, TONE, SEMITONE, TONE, TONE],
-                Mode::Lydian => [TONE, TONE, SEMITONE, TONE, TONE, SEMITONE],
-                Mode::Aeolian => [TONE, SEMITONE, TONE, TONE, SEMITONE, TONE],
-                Mode::Locrian => [SEMITONE, TONE, TONE, SEMITONE, TONE, TONE],
-            },
-            index: 0,
+        // The seventh interval is ignored, since it simply returns to the octave
+        // (which is already stored as the root note in a `Key`)
+        match self {
+            Mode::Ionian => [2, 2, 1, 2, 2, 2].iter(),
+            Mode::Dorian => [2, 1, 2, 2, 2, 1].iter(),
+            Mode::Phrygian => [1, 2, 2, 2, 1, 2].iter(),
+            Mode::Mixolydian => [2, 2, 2, 1, 2, 2].iter(),
+            Mode::Lydian => [2, 2, 1, 2, 2, 1].iter(),
+            Mode::Aeolian => [2, 1, 2, 2, 1, 2].iter(),
+            Mode::Locrian => [1, 2, 2, 1, 2, 2].iter(),
         }
-    }
-}
-
-/// An iterator over a mode's six intervals.
-pub struct ModeIntervalIter {
-    intervals: [Interval; 6],
-    index: usize,
-}
-
-impl Iterator for ModeIntervalIter {
-    type Item = Interval;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let interval = self.intervals.get(self.index).copied();
-        self.index += 1;
-        interval
     }
 }

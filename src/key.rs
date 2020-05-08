@@ -28,7 +28,7 @@ impl Key {
         // of the `mode`
         for (i, interval) in mode.into_iter().enumerate() {
             let previous_note = notes[i];
-            notes.push(previous_note + interval);
+            notes.push(previous_note + *interval);
         }
 
         Self {

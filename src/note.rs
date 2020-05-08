@@ -1,4 +1,3 @@
-use crate::Interval;
 use nom::{branch::alt, bytes::complete::tag, combinator::map};
 use std::{
     cmp::Ordering,
@@ -136,22 +135,22 @@ mod display_tests {
     }
 }
 
-impl Add<Interval> for Note {
+impl Add<usize> for Note {
     type Output = Self;
 
-    fn add(self, interval: Interval) -> Self::Output {
+    fn add(self, semitones: usize) -> Self::Output {
         Self {
-            value: self.value + interval.semitones,
+            value: self.value + semitones,
         }
     }
 }
 
-impl Sub<Interval> for Note {
+impl Sub<usize> for Note {
     type Output = Self;
 
-    fn sub(self, interval: Interval) -> Self::Output {
+    fn sub(self, semitones: usize) -> Self::Output {
         Self {
-            value: self.value - interval.semitones,
+            value: self.value - semitones,
         }
     }
 }
@@ -159,22 +158,21 @@ impl Sub<Interval> for Note {
 #[cfg(test)]
 #[test]
 fn transposition() {
-    assert_eq!(Note::new(10) + Interval::new(5), Note::new(15));
-    assert_eq!(Note::new(42) + Interval::new(12), Note::new(54));
-    assert_eq!(Note::new(10) - Interval::new(5), Note::new(5));
-    assert_eq!(Note::new(42) - Interval::new(12), Note::new(30));
+    assert_eq!(Note::new(10) + 5, Note::new(15));
+    assert_eq!(Note::new(42) + 12, Note::new(54));
+    assert_eq!(Note::new(10) - 5, Note::new(5));
+    assert_eq!(Note::new(42) - 12, Note::new(30));
 }
 
 impl Sub for Note {
-    type Output = Interval;
+    type Output = usize;
 
     // Outputs the semitone difference between the two note values
-    // as an `Interval`
     fn sub(self, other: Self) -> Self::Output {
         match self.value.cmp(&other.value) {
-            Ordering::Greater => Interval::new(self.value - other.value),
-            Ordering::Less => Interval::new(other.value - self.value),
-            Ordering::Equal => Interval::new(0),
+            Ordering::Greater => self.value - other.value,
+            Ordering::Less => other.value - self.value,
+            Ordering::Equal => 0,
         }
     }
 }
@@ -182,9 +180,9 @@ impl Sub for Note {
 #[cfg(test)]
 #[test]
 fn interval_calculation() {
-    assert_eq!(Note::new(10) - Note::new(5), Interval::new(5));
-    assert_eq!(Note::new(21) - Note::new(27), Interval::new(6));
-    assert_eq!(Note::new(37) - Note::new(37), Interval::new(0));
+    assert_eq!(Note::new(10) - Note::new(5), 5);
+    assert_eq!(Note::new(21) - Note::new(27), 6);
+    assert_eq!(Note::new(37) - Note::new(37), 0);
 }
 
 impl IntoIterator for Note {
