@@ -4,7 +4,7 @@ use std::fmt;
 use strum::IntoEnumIterator;
 
 /// A collection of seven notes, categorised by a `Mode`.
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct Key {
     notes: [Note; 7],
     mode: Mode,
@@ -163,7 +163,27 @@ mod display_tests {
 }
 
 /// Guesses keys that the given collection of `notes` could belong to.
-pub fn guess_key(notes: Vec<Note>, root_note: Option<Note>) -> Vec<Key> {
+///
+/// # Examples
+///
+/// ```rust
+/// use minstrel::{Key, Mode, Note};
+///
+/// let notes = vec![
+///     Note::new(0), // C
+///     Note::new(2), // D
+///     Note::new(4), // E
+///     Note::new(7), // G
+///     Note::new(11), // B
+/// ];
+///
+/// assert_eq!(minstrel::guess_keys(notes.clone(), None).len(), 14);
+///
+/// // Specifying that the key must start on a certain note (C in this case)
+/// // significantly reduces the number of possible keys
+/// assert_eq!(minstrel::guess_keys(notes, Some(Note::new(0))).len(), 2);
+/// ```
+pub fn guess_keys(notes: Vec<Note>, root_note: Option<Note>) -> Vec<Key> {
     // Loops through each mode for the given root note and checks if it
     // contains all of the given `notes`
     let key_filter = |root_note, key_candidates: &mut Vec<_>| {
