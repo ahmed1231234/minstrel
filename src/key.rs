@@ -16,6 +16,8 @@ impl Key {
     /// # Examples
     ///
     /// ```rust
+    /// use minstrel::{Key, Mode, Note};
+    ///
     /// let c_major = Key::new(Note::new(0), Mode::Ionian);
     /// let a_minor = Key::new(Note::new(9), Mode::Aeolian);
     /// ```
@@ -42,6 +44,8 @@ impl Key {
     /// # Examples
     ///
     /// ```rust
+    /// use minstrel::{Key, Mode, Note};
+    ///
     /// let e_phrygian = Key::new(Note::new(4), Mode::Phrygian);
     /// assert_eq!(
     ///     e_phrygian.notes_disregarding_octave(),
@@ -56,7 +60,7 @@ impl Key {
     ///     ]
     /// );
     /// ```
-    fn notes_disregarding_octave(mut self) -> [Note; 7] {
+    pub fn notes_disregarding_octave(mut self) -> [Note; 7] {
         for note in &mut self.notes {
             *note = note.disregard_octave();
         }
@@ -116,7 +120,7 @@ impl fmt::Display for Key {
         if f.alternate() {
             let num_notes = self.notes.len();
             for (i, note) in self.notes.iter().enumerate() {
-                write!(f, "{:#}", note)?;
+                write!(f, "{}", note)?;
                 // Only prints a space if this was not the final note
                 // (to avoid having a trailing space)
                 if i != num_notes - 1 {
@@ -126,7 +130,7 @@ impl fmt::Display for Key {
 
             Ok(())
         } else {
-            write!(f, "{:#} {}", self.notes[0], self.mode)
+            write!(f, "{} {}", self.notes[0], self.mode)
         }
     }
 }

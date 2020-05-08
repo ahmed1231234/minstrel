@@ -19,6 +19,8 @@ impl Note {
     /// # Examples
     ///
     /// ```rust
+    /// use minstrel::Note;
+    ///
     /// let C0 = Note::new(0);
     /// let F4 = Note::new(53);
     /// let Ab5 = Note::new(68);
@@ -33,6 +35,8 @@ impl Note {
     /// # Examples
     ///
     /// ```rust
+    /// use minstrel::Note;
+    ///
     /// let F = Note::new(53).disregard_octave();
     ///
     /// let Ab5 = Note::new(68);

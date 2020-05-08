@@ -15,6 +15,8 @@ impl Interval {
     /// # Examples
     ///
     /// ```rust
+    /// use minstrel::Interval;
+    ///
     /// let major_third = Interval::new(4);
     /// let minor_seventh = Interval::new(10);
     /// let octave = Interval::new(12);
