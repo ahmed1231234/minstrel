@@ -6,7 +6,58 @@ use std::{
     str::FromStr,
 };
 
-/// A note, represented as a single positive integer.
+/// A note, represented as a single positive integer (called it's `value`).
+/// A `value` of 0 = C0, 1 = Db0 etc.
+///
+/// You can create a `Note` by either parsing from a string or directly
+/// inputting a number value:
+///
+/// ```rust
+/// use minstrel::Note;
+/// use std::str::FromStr;
+///
+/// // Directly
+/// let A0 = Note::new(9);
+///
+/// // From a string
+/// let Eb100 = Note::from_str("Eb100");
+/// ```
+///
+/// `Note`s have a number of useful features. For example, you can easily
+/// transpose one by using the addition or subtraction operators:
+///
+/// ```rust
+/// use minstrel::Note;
+///
+/// let C1 = Note::new(12);
+/// assert_eq!(C1 + 5, Note::new(17));
+/// assert_eq!(C1 - 2, Note::new(10));
+/// ```
+///
+/// You can also get the semitone difference between two `Note`s just by
+/// subtracting them:
+///
+/// ```rust
+/// use minstrel::Note;
+///
+/// let C0 = Note::new(0);
+/// let E0 = Note::new(4);
+///
+/// // It doesn't matter which order the notes are in
+/// assert_eq!(C0 - E0, 4);
+/// assert_eq!(E0 - C0, 4);
+/// ```
+///
+/// Finally, you can call `into_iter` on a `Note` to iterate over it:
+///
+/// ```rust
+/// use minstrel::Note;
+///
+/// // Prints the chromatic scale
+/// for note in Note::new(0).into_iter().take(12) {
+///    println!("{}", note);
+/// }
+/// ```
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]
 pub struct Note {
     pub value: usize,

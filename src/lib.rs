@@ -1,3 +1,4 @@
+//! A simple and intuitive music library.
 #[warn(missing_docs)]
 mod key;
 mod mode;
